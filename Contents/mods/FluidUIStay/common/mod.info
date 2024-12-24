@@ -1,6 +1,6 @@
 name=FluidUIStay
 id=FluidUIStay
-modversion=1.0
+modversion=1.1
 author=Tiax
 description=For build 42 unstable: makes the "transfer liquids" UI remember where you moved it on screen after closing.
 icon=icon.png
