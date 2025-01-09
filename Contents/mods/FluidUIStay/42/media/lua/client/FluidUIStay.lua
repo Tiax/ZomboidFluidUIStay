@@ -1,7 +1,8 @@
-if not FluidUIStay then
+FluidUIStay = FluidUIStay or {}
+
+if not FluidUIStay.orgISFluidTransferUIOpenPanel then
   -- FluidUIStay (table) is empty
   -- media\lua\client\Fluids\ISFluidTransferUI.lua
-  FluidUIStay = {}
   FluidUIStay.orgISFluidTransferUIOpenPanel = ISFluidTransferUI.OpenPanel 
   FluidUIStay.orgISFluidTransferUIcreateChildren = ISFluidTransferUI.createChildren
 end
@@ -18,6 +19,17 @@ function FluidUIStay.swap(ui)
   ui.panelRight:setIsLeft(false);
 
   ui:validatePanel();
+end
+
+function FluidUIStay.onButton(ui, btn)
+  -- fluidUI=self.parent would probably also work
+  ui.slider:setCurrentValue(1.0) -- set slider to max
+  ui:validatePanel() -- force validate ui:validatePanel(true)
+
+  -- fake button press the transfer button, if not disabled after the validation
+  if not ui.disableTransfer then
+    ui:onButton(ui.btnTransfer)
+  end
 end
 
 -- Overwrite: ISFluidTransferUI.OpenPanel
@@ -57,4 +69,26 @@ function ISFluidTransferUI:createChildren()
       end
     end
   end
+
+  -- FEATURE: replace the max label with a button
+  local c = self.buttonBorderColor;
+
+  self.btnMaxTransfer = ISButton:new(self.btnSwap.x, self.maxTransferLabel.y-3, self.btnSwap.width, self.btnSwap.height, self.maxTransferText, self, nil);
+  self.btnMaxTransfer:initialise();
+  self.btnMaxTransfer:instantiate();
+  self.btnMaxTransfer.backgroundColor.a = 0;
+  self.btnMaxTransfer.borderColor = {r=c.r, g=c.g,b=c.b,a=c.a};
+  self.btnMaxTransfer:setOnClick(FluidUIStay.onButton, self)
+
+  -- wrapper for ISLabel func
+  self.btnMaxTransfer.setName = function (self, title)
+    self:setTitle(title)
+  end
+
+  self:addChild(self.btnMaxTransfer);
+
+  -- remove the label, replace the reference
+  --self.maxTransferLabel:setVisible(false) 
+  self:removeChild(self.maxTransferLabel)
+  self.maxTransferLabel = self.btnMaxTransfer
 end
