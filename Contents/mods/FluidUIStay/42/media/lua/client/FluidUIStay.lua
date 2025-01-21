@@ -7,6 +7,11 @@ if not FluidUIStay.orgISFluidTransferUIOpenPanel then
   FluidUIStay.orgISFluidTransferUIcreateChildren = ISFluidTransferUI.createChildren
 end
 
+-- wrapper/fake function for ISLabel:setName->ISButton:setTitle
+local function setNameToTitleWrapper(self, title)
+  self:setTitle(title)
+end
+
 function FluidUIStay.swap(ui)
   local tmp = ui.panelLeft;
   
@@ -71,24 +76,25 @@ function ISFluidTransferUI:createChildren()
   end
 
   -- FEATURE: replace the max label with a button
-  local c = self.buttonBorderColor;
+  if self.maxTransferLabel then
+    local c = self.buttonBorderColor;
 
-  self.btnMaxTransfer = ISButton:new(self.btnSwap.x, self.maxTransferLabel.y-3, self.btnSwap.width, self.btnSwap.height, self.maxTransferText, self, nil);
-  self.btnMaxTransfer:initialise();
-  self.btnMaxTransfer:instantiate();
-  self.btnMaxTransfer.backgroundColor.a = 0;
-  self.btnMaxTransfer.borderColor = {r=c.r, g=c.g,b=c.b,a=c.a};
-  self.btnMaxTransfer:setOnClick(FluidUIStay.onButton, self)
+    self.btnMaxTransfer = ISButton:new(self.btnSwap.x, self.maxTransferLabel.y-3, self.btnSwap.width, self.btnSwap.height, self.maxTransferText, self, nil);
+    self.btnMaxTransfer:initialise();
+    self.btnMaxTransfer:instantiate();
+    self.btnMaxTransfer.backgroundColor.a = 0;
+    self.btnMaxTransfer.borderColor = {r=c.r, g=c.g,b=c.b,a=c.a};
+    self.btnMaxTransfer:setOnClick(FluidUIStay.onButton, self)
 
-  -- wrapper for ISLabel func
-  self.btnMaxTransfer.setName = function (self, title)
-    self:setTitle(title)
+    -- wrapper for ISLabel func
+    self.btnMaxTransfer.setName = setNameToTitleWrapper
+    local parent = self.maxTransferLabel.parent
+    
+    if parent then
+      parent:addChild(self.btnMaxTransfer);
+      -- remove the label, replace the reference to it with our button
+      parent:removeChild(self.maxTransferLabel)
+      self.maxTransferLabel = self.btnMaxTransfer
+    end
   end
-
-  self:addChild(self.btnMaxTransfer);
-
-  -- remove the label, replace the reference
-  --self.maxTransferLabel:setVisible(false) 
-  self:removeChild(self.maxTransferLabel)
-  self.maxTransferLabel = self.btnMaxTransfer
 end
