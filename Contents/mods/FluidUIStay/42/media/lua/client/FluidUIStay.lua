@@ -52,6 +52,29 @@ function ISFluidTransferUI.OpenPanel(_player, _container, _source) -- void
   end
 end
 
+-- Overwrite: ISFluidTransferUI:prerender
+function ISFluidTransferUI:prerender()
+    ISPanel.prerender(self);
+
+    --draws a background for transfer button and action progress if action exists.
+    if self.btnTransfer then
+        local x = self.btnTransfer:getX();
+        local y = self.btnTransfer:getY();
+        local w = self.btnTransfer:getWidth();
+        local h = self.btnTransfer:getHeight();
+        local parent = self.btnTransfer.parent; -- FIX: we now draw on panelMiddle
+
+        parent:drawRect(x, y, w, h, 1.0, 0, 0, 0);
+        self.btnTransfer.backgroundColor.a = 0 -- FIX: I don't know why, but this gets reset somehow -> apply transparency again
+
+        if self.action and self.action.action then
+            local c = self.transferColor;
+            w = w * self.action:getJobDelta();
+            parent:drawRect(x, y, w, h, c.a, c.r, c.g, c.b);
+        end
+    end
+end
+
 function ISFluidTransferUI:createChildren()
   -- call original
   FluidUIStay.orgISFluidTransferUIcreateChildren(self);
