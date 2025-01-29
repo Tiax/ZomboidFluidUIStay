@@ -7,6 +7,9 @@ description=1) remember where you moved it on screen after closing (this was app
 description=2) swap left side/right side based on container content: empty container goes on right now, non-empty on left
 description=3) There's now a button to quickly move the max amount (=slider all the way to the right+transfer).
 description=I made this to save my own sanity, because the UI keeps popping up behind my inventory - probably someone else might find this useful.
+description=
 description=NOTE: I'll hide the mod from the workshop, once it's officially fixed!
+description=
+description=See sources on [url=https://github.com/Tiax/ZomboidFluidUIStay]Github[/url].
 tags=Build 42;QoL
 visibility=public
