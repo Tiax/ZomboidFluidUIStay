@@ -1,6 +1,6 @@
 name=Fluid UI Enhancements (FluidUIStay)
 id=FluidUIStay
-modversion=1.2
+modversion=1.7
 author=Tiax
 description=For build 42 unstable: makes the "transfer liquids" UI remember where you moved it on screen after closing and swaps sides based on fluid contents/empty container.
 icon=icon.png
