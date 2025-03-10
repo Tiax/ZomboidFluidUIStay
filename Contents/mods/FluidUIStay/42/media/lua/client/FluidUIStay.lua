@@ -5,6 +5,7 @@ if not FluidUIStay.orgISFluidTransferUIOpenPanel then
   -- media\lua\client\Fluids\ISFluidTransferUI.lua
   FluidUIStay.orgISFluidTransferUIOpenPanel = ISFluidTransferUI.OpenPanel 
   FluidUIStay.orgISFluidTransferUIcreateChildren = ISFluidTransferUI.createChildren
+  FluidUIStay.orgISFluidContainerPanelclickedDropBox = ISFluidContainerPanel.clickedDropBox
 end
 
 -- wrapper/fake function for ISLabel:setName->ISButton:setTitle
@@ -120,4 +121,45 @@ function ISFluidTransferUI:createChildren()
       self.maxTransferLabel = self.btnMaxTransfer
     end
   end
+end
+
+function ISFluidContainerPanel:clickedDropBox(x, y)
+  -- call original
+  FluidUIStay.orgISFluidContainerPanelclickedDropBox(self, x, y)
+
+  -- post process: add item icons to existing context menu
+  local playerNum = self.player:getPlayerNum()
+  local context = getPlayerContextMenu(playerNum)
+
+  if not context or context:isEmpty() then
+    return
+  end
+
+  for i, opt in ipairs(context.options) do
+    local item = opt.param1
+
+    -- apparently ISContextMenu doesn't render including v:getTextureFluidMask(), pity!
+    if item then
+      opt.iconTexture =  item:getTex()
+    end
+  end
+
+  -- the context's size likely changed because of the icons, let's reposition
+  local parent = self.parent -- ISFluidContainerPanel
+  local parentUI = parent.parent -- ISFluidInfoUI/ISFluidTransferUI
+  local xx = parentUI:getAbsoluteX() + parentUI:getWidth()
+  local yy = parentUI:getAbsoluteY() + parent:getY()
+
+  context:setWidth(context:calcWidth())
+  context:calcHeight()
+
+  if parent.isLeft then
+    xx = parentUI:getAbsoluteX() - context:getWidth()
+    context:setSlideGoalX(xx - 20, xx)
+  else
+    context:setSlideGoalX(xx + 20, xx)
+  end
+
+  context:setSlideGoalY(yy - 10, yy)
+  context:bringToTop()
 end
