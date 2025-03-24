@@ -145,4 +145,23 @@ function ISFluidContainerPanel:clickedDropBox(x, y)
       opt.itemForTexture = item
     end
   end
+
+  -- the context's size now likely changed because of the icons, let's resize+position
+  local parent = self.parent -- ISFluidContainerPanel
+  local parentUI = parent.parent -- ISFluidInfoUI/ISFluidTransferUI
+  local xx = parentUI:getAbsoluteX() + parentUI:getWidth()
+  local yy = parentUI:getAbsoluteY() + parent:getY()
+
+  context:setWidth(context:calcWidth())
+  context:calcHeight()
+
+  if parent.isLeft then
+    xx = parentUI:getAbsoluteX() - context:getWidth()
+    context:setSlideGoalX(xx - 20, xx)
+  else
+    context:setSlideGoalX(xx + 20, xx)
+  end
+
+  context:setSlideGoalY(yy - 10, yy)
+  context:bringToTop()
 end
