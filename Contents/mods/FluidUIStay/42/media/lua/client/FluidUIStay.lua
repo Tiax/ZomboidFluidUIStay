@@ -138,16 +138,40 @@ function ISFluidContainerPanel:clickedDropBox(x, y)
     return
   end
 
+  local parent = self.parent -- ISFluidContainerPanel
+  local itemsToRemove = {}
+
   for _, opt in ipairs(context.options) do
     local item = opt.param1
+    local fluidContainer = item:getFluidContainer()
+
+    -- Remove empty/full container on left/right context menu
+    if fluidContainer then
+      if parent.isLeft and fluidContainer:isEmpty() then
+        -- left side: skip empty containers (source)
+        table.insert(itemsToRemove, opt)
+      elseif not parent.isLeft and fluidContainer:isFull() then
+        -- right side: skip full containers (target)
+        table.insert(itemsToRemove, opt)
+      end
+    end
 
     if item then
       opt.itemForTexture = item
     end
   end
 
+  -- finally: remove them
+  for i=1, #itemsToRemove do
+    local k = luautils.indexOf(context.options, itemsToRemove[i])
+
+    if k ~= -1 then
+      table.remove(context.options, k)
+      context.numOptions = context.numOptions-1
+    end
+  end
+
   -- the context's size now likely changed because of the icons, let's resize+position
-  local parent = self.parent -- ISFluidContainerPanel
   local parentUI = parent.parent -- ISFluidInfoUI/ISFluidTransferUI
   local xx = parentUI:getAbsoluteX() + parentUI:getWidth()
   local yy = parentUI:getAbsoluteY() + parent:getY()
