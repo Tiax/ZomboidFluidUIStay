@@ -11,8 +11,6 @@ description=5) Adds items' icons to the context menu, to make them easier to ide
 description=
 description=I made this to save my own sanity, because the UI keeps popping up behind my inventory - probably someone else might find this useful.
 description=
-description=NOTE: I'll hide the mod from the workshop, once it's officially fixed!
-description=
 description=See sources on [url=https://github.com/Tiax/ZomboidFluidUIStay]Github[/url].
 tags=Build 42;QoL
 visibility=public
